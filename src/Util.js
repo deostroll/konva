@@ -542,12 +542,26 @@
         firstChar === firstChar.toUpperCase();
     },
     createCanvasElement: function() {
-      var canvas = Konva.document.createElement('canvas');
-      // on some environments canvas.style is readonly
-      try {
-        canvas.style = canvas.style || {};
-      } catch (e) {}
-      return canvas;
+      if (Konva.Util.isBrowser()) {
+        var canvas = Konva.document.createElement('canvas');
+        // on some environments canvas.style is readonly
+        try {
+          canvas.style = canvas.style || {};
+        } catch (e) {}
+        return canvas;
+      }
+      else {
+        var Canvas = Konva._nodeCanvas;
+        var canvas = new Canvas();
+
+        try {
+          canvas.style = canvas.style || {};
+        } catch (e) {
+
+        }
+        return canvas;
+      }
+
     },
     isBrowser: function() {
       return typeof exports !== 'object';

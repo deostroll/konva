@@ -2,7 +2,7 @@
  * Konva JavaScript Framework v1.6.1
  * http://konvajs.github.io/
  * Licensed under the MIT or GPL Version 2 licenses.
- * Date: Tue Apr 25 2017
+ * Date: Wed May 03 2017
  *
  * Original work Copyright (C) 2011 - 2013 by Eric Rowell (KineticJS)
  * Modified work Copyright (C) 2014 - 2017 by Anton Lavrenov (Konva)
@@ -249,11 +249,16 @@
       // only CommonJS-like enviroments that support module.exports,
       // like Node.
       var Canvas = require('canvas');
-      var jsdom = require('jsdom').jsdom;
+      // var jsdom = require('jsdom').jsdom;
+      var jsdom = require('jsdom').JSDOM;
 
-      Konva.window = jsdom(
+      // Konva.window = jsdom(
+      //   '<!DOCTYPE html><html><head></head><body></body></html>'
+      // ).defaultView;
+      var dom = new jsdom(
         '<!DOCTYPE html><html><head></head><body></body></html>'
-      ).defaultView;
+      );
+      Konva.window = dom.window;
       Konva.document = Konva.window.document;
       Konva.window.Image = Canvas.Image;
       Konva._nodeCanvas = Canvas;
@@ -814,12 +819,26 @@
         firstChar === firstChar.toUpperCase();
     },
     createCanvasElement: function() {
-      var canvas = Konva.document.createElement('canvas');
-      // on some environments canvas.style is readonly
-      try {
-        canvas.style = canvas.style || {};
-      } catch (e) {}
-      return canvas;
+      if (Konva.Util.isBrowser()) {
+        var canvas = Konva.document.createElement('canvas');
+        // on some environments canvas.style is readonly
+        try {
+          canvas.style = canvas.style || {};
+        } catch (e) {}
+        return canvas;
+      }
+      else {
+        var Canvas = Konva._nodeCanvas;
+        var canvas = new Canvas();
+
+        try {
+          canvas.style = canvas.style || {};
+        } catch (e) {
+
+        }
+        return canvas;
+      }
+
     },
     isBrowser: function() {
       return typeof exports !== 'object';

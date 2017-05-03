@@ -249,11 +249,16 @@
       // only CommonJS-like enviroments that support module.exports,
       // like Node.
       var Canvas = require('canvas');
-      var jsdom = require('jsdom').jsdom;
+      // var jsdom = require('jsdom').jsdom;
+      var jsdom = require('jsdom').JSDOM;
 
-      Konva.window = jsdom(
+      // Konva.window = jsdom(
+      //   '<!DOCTYPE html><html><head></head><body></body></html>'
+      // ).defaultView;
+      var dom = new jsdom(
         '<!DOCTYPE html><html><head></head><body></body></html>'
-      ).defaultView;
+      );
+      Konva.window = dom.window;
       Konva.document = Konva.window.document;
       Konva.window.Image = Canvas.Image;
       Konva._nodeCanvas = Canvas;
